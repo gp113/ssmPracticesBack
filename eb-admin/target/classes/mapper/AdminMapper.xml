@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+	namespace：命名空间，其值为某一个dao层类的具体路径
+ -->
+<mapper namespace="com.java.mapper.AdminMapper">
+
+    <!--根据username和parentId查询菜单-->
+    <select id="selectMenu" resultType="Map">
+		SELECT am.* FROM
+		  admin_menus am INNER JOIN admin_user_authority aua ON am.id = aua.menuId
+		    INNER JOIN admin_users au ON aua.userId = au.id
+		  WHERE username = #{username} AND am.parentId = #{parentId}
+	</select>
+
+</mapper>

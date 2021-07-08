@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java.mapper.VendorMapper">
+
+    <!--查询所有信息-->
+    <select id="list" resultType="map" parameterType="com.java.pojo.Vendor">
+        SELECT
+            v.id AS id,
+            v.name AS name,
+            v.short_name AS shortName,
+            v.address AS address,
+            v.linkman AS linkman,
+            v.linkman_phone AS linkmanPhone,
+            v.phone AS phone,
+            v.remark AS remark
+        FROM vendor v WHERE 1=1
+        <if test="name != null and name != ''">
+            <bind name="nameLike" value="'%'+name+'%'"/>
+            AND v.name LIKE #{nameLike}
+        </if>
+        <if test="shortName != null and shortName != ''">
+            <bind name="shortNameLike" value="'%'+shortName+'%'"/>
+            AND v.short_name LIKE #{shortNameLike}
+        </if>
+        <if test="address != null and address != ''">
+            <bind name="addressLike" value="'%'+address+'%'"/>
+            AND v.address LIKE #{addressLike}
+        </if>
+        <if test="linkman != null and linkman != ''">
+            <bind name="linkmanLike" value="'%'+linkman+'%'"/>
+            AND v.linkman LIKE #{linkmanLike}
+        </if>
+        <if test="linkmanPhone != null and linkmanPhone != ''">
+            <bind name="linkmanPhoneLike" value="'%'+linkmanPhone+'%'"/>
+            AND v.linkman_phone LIKE #{linkmanPhoneLike}
+        </if>
+        <if test="phone != null and phone != ''">
+            <bind name="phoneLike" value="'%'+phone+'%'"/>
+            AND v.phone LIKE #{phoneLike}
+        </if>
+        <if test="remark != null and remark != ''">
+            <bind name="remarkLike" value="'%'+remark+'%'"/>
+            AND v.remark LIKE #{remarkLike}
+        </if>
+    </select>
+
+    <!--    根据厂商id查询厂商信息-->
+    <select id="selectById" parameterType="int" resultType="map">
+        SELECT
+            v.id AS id,
+            v.name AS name,
+            v.short_name AS shortName,
+            v.address AS address,
+            v.linkman AS linkman,
+            v.linkman_phone AS linkmanPhone,
+            v.phone AS phone,
+            v.remark AS remark
+        FROM
+            vendor v
+        WHERE
+            v.id = #{id}
+    </select>
+
+    <!--    根据厂商id查询关联设备型号-->
+    <select id="selectDeviceTypeById" parameterType="int" resultType="map">
+        SELECT
+            dt.id AS device_type_id,
+            dt.NAME AS device_type_name,
+            g.NAME AS guiyue_name,
+            g.version AS guiyue_version
+        FROM
+            vendor v
+            INNER JOIN device_type dt ON v.id = dt.vendor_id
+            INNER JOIN guiyue g ON dt.txgy_id = g.id
+        WHERE
+            v.id = #{id}
+    </select>
+
+    <!--    添加厂商-->
+    <insert id="addVendor" parameterType="com.java.pojo.Vendor">
+        INSERT INTO vendor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="shortName != null and shortName != ''">
+                short_name,
+            </if>
+            <if test="address != null and address != ''">
+                address,
+            </if>
+            <if test="linkman != null and linkman != ''">
+                linkman,
+            </if>
+            <if test="linkmanPhone != null and linkmanPhone != ''">
+                linkman_phone,
+            </if>
+            <if test="phone != null and phone != ''">
+                phone,
+            </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="shortName != null and shortName != ''">
+                #{shortName},
+            </if>
+            <if test="address != null and address != ''">
+                #{address},
+            </if>
+            <if test="linkman != null and linkman != ''">
+                #{linkman},
+            </if>
+            <if test="linkmanPhone != null and linkmanPhone != ''">
+                #{linkmanPhone},
+            </if>
+            <if test="phone != null and phone != ''">
+                #{phone},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <!--    修改厂商-->
+    <update id="updateVendor" parameterType="com.java.pojo.Vendor">
+        UPDATE vendor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="shortName != null and shortName != ''">
+                short_name = #{shortName},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="linkman != null and linkman != ''">
+                linkman = #{linkman},
+            </if>
+            <if test="linkmanPhone != null and linkmanPhone != ''">
+                linkman_phone = #{linkmanPhone},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+<!--    根据id删除厂商-->
+    <delete id="deleteVendors" parameterType="string">
+        DELETE FROM vendor WHERE id IN (${idStr})
+    </delete>
+</mapper>

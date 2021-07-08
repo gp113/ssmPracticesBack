@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java.mapper.DeviceTypeMapper">
+
+    <!--查询所有设备型号信息-->
+    <select id="list" parameterType="map" resultType="map">
+        SELECT
+        dt.id AS id,
+        dt.NAME AS deviceTypeName,
+        dt.dy,
+        dt.fbl,
+        dt.lc,
+        dt.txfs,
+        dt.bz,
+        dt.create_time AS createTime,
+        v.NAME AS vendorName,
+        v.short_name AS vendorShortName,
+        v.address,
+        v.linkman,
+        v.linkman_phone,
+        v.phone,
+        v.remark,
+        gy.NAME AS guiYueName,
+        gy.version,
+        gy.miaoshu
+        FROM
+        device_type dt
+        INNER JOIN vendor v ON dt.vendor_id = v.id
+        INNER JOIN guiyue gy ON dt.txgy_id = gy.id
+        WHERE 1=1
+        <if test="name != null and name != ''">
+            <bind name="nameLike" value="'%'+name+'%'"/>
+            AND dt.name LIKE #{nameLike}
+        </if>
+        <if test="vendorName != null and vendorName != ''">
+            <bind name="vendorNameLike" value="'%'+vendorName+'%'"/>
+            AND v.name LIKE #{vendorNameLike}
+        </if>
+    </select>
+
+    <!--    获取所有厂商-->
+    <select id="getVendorList" resultType="map">
+        SELECT * FROM vendor
+    </select>
+
+    <!--    获取所有规约-->
+    <select id="getTxgyList" resultType="map">
+        SELECT * FROM guiyue
+    </select>
+
+    <!--    新增设备型号-->
+    <insert id="addDeviceType" parameterType="com.java.pojo.DeviceType">
+        INSERT INTO device_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="vendorId != null and vendorId != ''">
+                vendor_id,
+            </if>
+            <if test="txgyId != null and txgyId != ''">
+                txgy_id,
+            </if>
+            <if test="dy != null and dy != ''">
+                dy,
+            </if>
+            <if test="fbl != null and fbl != ''">
+                fbl,
+            </if>
+            <if test="lc != null and lc != ''">
+                lc,
+            </if>
+            <if test="txfs != null and txfs != ''">
+                txfs,
+            </if>
+            <if test="bz != null and bz != ''">
+                bz,
+            </if>
+            <if test="creatTime != null">
+                create_time,
+            </if>
+            <if test="wbq != null and wbq != ''">
+                wbq,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="vendorId != null and vendorId != ''">
+                #{vendorId},
+            </if>
+            <if test="txgyId != null and txgyId != ''">
+                #{txgyId},
+            </if>
+            <if test="dy != null and dy != ''">
+                #{dy},
+            </if>
+            <if test="fbl != null and fbl != ''">
+                #{fbl},
+            </if>
+            <if test="lc != null and lc != ''">
+                #{lc},
+            </if>
+            <if test="txfs != null and txfs != ''">
+                #{txfs},
+            </if>
+            <if test="bz != null and bz != ''">
+                #{bz},
+            </if>
+            <if test="creatTime != null">
+                #{creatTime},
+            </if>
+            <if test="wbq != null and wbq != ''">
+                #{wbq},
+            </if>
+        </trim>
+    </insert>
+
+    <!--    查询设备型号-->
+    <select id="getDeviceTypeById" parameterType="integer" resultType="map">
+        SELECT
+            id,
+            name,
+            vendor_id AS vendorId,
+            txgy_id AS txgyId,
+            dy,
+            fbl,
+            lc,
+            txfs,
+            bz,
+            wbq
+        FROM
+            device_type
+        WHERE
+            id = #{id}
+    </select>
+
+    <!--    查询设备类型信息以及关联的厂商信息-->
+    <select id="getDeviceTypeDetail" parameterType="integer" resultType="map">
+        SELECT
+            dt.id,
+            dt.name,
+            dt.dy,
+            dt.fbl,
+            dt.lc,
+            dt.txfs,
+            dt.bz,
+            dt.wbq,
+            v.name AS vendorName,
+            v.short_name AS shortName,
+            v.address,
+            v.linkman,
+            v.linkman_phone AS linkmanPhone,
+            v.phone,
+            v.remark,
+            gy.name AS guiYueName,
+            gy.version
+        FROM
+            device_type dt
+            INNER JOIN vendor v ON dt.vendor_id = v.id
+            INNER JOIN guiyue gy ON dt.txgy_id = gy.id
+        WHERE
+            dt.id = #{id}
+    </select>
+
+    <!--    修改设备型号信息-->
+    <update id="updateDeviceType" parameterType="com.java.pojo.Vendor">
+        UPDATE device_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="vendorId != null and vendorId != ''">
+                vendor_id = #{vendorId},
+            </if>
+            <if test="txgyId != null and txgyId != ''">
+                txgy_id = #{txgyId},
+            </if>
+            <if test="dy != null and dy != ''">
+                dy = #{dy},
+            </if>
+            <if test="fbl != null and fbl != ''">
+                fbl = #{fbl},
+            </if>
+            <if test="lc != null and lc != ''">
+                lc = #{lc},
+            </if>
+            <if test="bz != null and bz != ''">
+                bz = #{bz},
+            </if>
+            <if test="creatTime != null">
+                create_time = #{creatTime},
+            </if>
+            <if test="txfs != null and txfs != ''">
+                txfs = #{txfs},
+            </if>
+            <if test="wbq != null and wbq != ''">
+                wbq = #{wbq},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+<!--    根据id删除设备型号-->
+    <delete id="deleteDeviceTypeById" parameterType="string">
+        DELETE FROM device_type WHERE id IN (${idStr})
+    </delete>
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java.mapper.TencentMapper">
+
+    <!--根据条查询云服务器，没有条件时查询所有数据-->
+    <select id="selectCloudsBySearch" resultType="Map">
+        SELECT * FROM tencent_cloud
+        <trim prefix="WHERE">
+            <if test="searchValue != null and searchValue != ''">${searchType} LIKE '%${searchValue}%'</if>
+        </trim>
+        LIMIT #{startIndex},#{pageSize}
+    </select>
+
+    <!--根据条查询云服务器的总数，没有条件时查询所有数据的总数-->
+    <select id="selectCloudsBySearchCount" resultType="Integer">
+        SELECT count(*) FROM tencent_cloud
+        <trim prefix="WHERE">
+            <if test="searchValue != null and searchValue != ''">${searchType} LIKE '%${searchValue}%'</if>
+        </trim>
+    </select>
+</mapper>
