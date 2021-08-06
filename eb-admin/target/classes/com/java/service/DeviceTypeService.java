@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface DeviceTypeService {
-    abstract Map<String, Object> list(Integer pageNum, Integer pageSize, Map<String, Object> queryInfo);
+    Map<String, Object> list(Integer pageNum, Integer pageSize, Map<String, Object> queryInfo);
 
     List<Map<String, Object>> getVendorList();
 
