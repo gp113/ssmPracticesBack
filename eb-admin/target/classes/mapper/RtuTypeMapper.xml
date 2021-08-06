@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java.mapper.RtuTypeMapper">
+
+    <!-- 查询所有RTU型号-->
+    <select id="list" parameterType="map" resultType="map">
+        SELECT
+        rt.id,
+        rt.`code` AS rtuCode,
+        rt.`name` AS rtuName,
+        v.`name` AS vendorName,
+        gy.`name` AS guiYueName,
+        gy.version,
+        rt.bz,
+        rt.create_time AS createTime
+        FROM
+        rtu_type rt
+        INNER JOIN vendor v ON rt.vendor_id = v.id
+        INNER JOIN guiyue gy ON rt.txgy_id = gy.id
+        WHERE
+        1 = 1
+        <if test="name != null and name != ''">
+            <bind name="nameLike" value="'%'+name+'%'"/>
+            AND rt.`name` LIKE #{nameLike}
+        </if>
+        <if test="guiyue != null">
+            AND rt.txgy_id = #{guiyue}
+        </if>
+        <if test="vendorName != null and vendorName != ''">
+            <bind name="vendorNameLike" value="'%'+vendorName+'%'" />
+            AND v.`name` LIKE #{vendorNameLike}
+        </if>
+        LIMIT #{pageNum}, #{pageSize}
+    </select>
+
+    <!-- 添加RTU型号   -->
+    <insert id="addRtuType" parameterType="com.java.pojo.RtuType">
+        INSERT rtu_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null and code != ''">
+                code,
+            </if>
+            <if test="name != null and name != ''">
+                name,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="vendorId != null">
+                vendor_id,
+            </if>
+            <if test="txgyId != null">
+                txgy_id,
+            </if>
+            <if test="txfs != null and txfs != ''">
+                txfs,
+            </if>
+            <if test="wbq != null and wbq != ''">
+                wbq,
+            </if>
+            <if test="bz != null and bz != ''">
+                bz,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="jsdw != null and jsdw != ''">
+                jsdw,
+            </if>
+            <if test="jsdwJbr != null and jsdwJbr != ''">
+                jsdw_jbr,
+            </if>
+            <if test="cjdw != null and cjdw != ''">
+                cjdw,
+            </if>
+            <if test="cjdwJbr != null and cjdwJbr != ''">
+                cjdw_jbr,
+            </if>
+            <if test="whdw != null and whdw != ''">
+                whdw,
+            </if>
+            <if test="whdwJbr != null and whdwJbr != ''">
+                whdw_jbr,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="code != null and  code != ''">
+                #{code},
+            </if>
+            <if test="name != null and  name != ''">
+                #{name},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="vendorId != null">
+                #{vendorId},
+            </if>
+            <if test="txgyId != null">
+                #{txgyId},
+            </if>
+            <if test="txfs != null and  txfs != ''">
+                #{txfs},
+            </if>
+            <if test="wbq != null and  wbq != ''">
+                #{wbq},
+            </if>
+            <if test="bz != null and  bz != ''">
+                #{bz},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="jsdw != null and  jsdw != ''">
+                #{jsdw},
+            </if>
+            <if test="jsdwJbr != null and  jsdwJbr != ''">
+                #{jsdwJbr},
+            </if>
+            <if test="cjdw != null and  cjdw != ''">
+                #{cjdw},
+            </if>
+            <if test="cjdwJbr != null and  cjdwJbr != ''">
+                #{cjdwJbr},
+            </if>
+            <if test="whdw != null and  whdw != ''">
+                #{whdw},
+            </if>
+            <if test="whdwJbr != null and  whdwJbr != ''">
+                #{whdwJbr},
+            </if>
+        </trim>
+    </insert>
+
+    <!--  根据id查询RTU型号信息  -->
+    <select id="getRtuTypeById" parameterType="integer" resultType="map">
+        SELECT
+            rt.id,
+            rt.code,
+            rt.name,
+            rt.type,
+            rt.vendor_id AS vendorId,
+            rt.txgy_id AS txgyId,
+            gy.version,
+            rt.txfs,
+            rt.wbq,
+            rt.bz,
+            rt.jsdw,
+            rt.jsdw_jbr AS jsdwJbr,
+            rt.cjdw,
+            rt.cjdw_jbr AS cjdwJbr,
+            rt.whdw,
+            rt.whdw_jbr AS whdwJbr
+        FROM
+            rtu_type rt
+            INNER JOIN guiyue gy ON rt.txgy_id = gy.id
+        WHERE
+            rt.id = #{id}
+    </select>
+
+    <!--  查询RTU类型信息以及关联的厂商信息  -->
+    <select id="getRtuTypeDetail" parameterType="integer" resultType="map">
+        SELECT
+            rt.id,
+            rt.code AS rtuCode,
+            rt.name AS rtuName,
+            rt.type AS rtuType,
+            rt.vendor_id AS vendorId,
+            rt.txgy_id AS txgyId,
+            rt.txfs,
+            rt.wbq,
+            rt.bz,
+            rt.create_time AS createTime,
+            rt.jsdw,
+            rt.jsdw_jbr AS jsdwJbr,
+            rt.cjdw,
+            rt.cjdw_jbr AS cjdwJbr,
+            rt.whdw,
+            rt.whdw_jbr AS whdwJbr,
+            v.name AS vendorName,
+            v.short_name AS vendorShortName,
+            v.address AS vendorAddress,
+            v.linkman AS vendorLinkman,
+            v.linkman_phone  AS vendorLinkmanPhone,
+            v.phone AS vendorPhone,
+            v.remark AS vendorRemark,
+            gy.name AS txgyName,
+            gy.version AS txgyVersion,
+            gy.miaoshu AS txgyMiaoshu
+        FROM
+            rtu_type rt
+                INNER JOIN vendor v ON rt.vendor_id = v.id
+                INNER JOIN guiyue gy ON rt.txgy_id = gy.id
+        WHERE
+            rt.id = #{id}
+    </select>
+
+    <!-- 根据id修改RTU型号信息   -->
+    <update id="updateRtuTypeById" parameterType="com.java.pojo.RtuType">
+        UPDATE rtu_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="code != null and code != ''">
+                `code` = #{code},
+            </if>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="vendorId != null">
+                vendor_id = #{vendorId},
+            </if>
+            <if test="txgyId != null">
+                txgy_id = #{txgyId},
+            </if>
+            <if test="txfs != null and txfs != ''">
+                txfs = #{txfs},
+            </if>
+            <if test="wbq != null and wbq != ''">
+                wbq = #{wbq},
+            </if>
+            <if test="bz != null and bz != ''">
+                bz = #{bz},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="jsdw != null and jsdw != ''">
+                jsdw = #{jsdw},
+            </if>
+            <if test="jsdwJbr != null and jsdwJbr != ''">
+                jsdw_jbr = #{jsdwJbr},
+            </if>
+            <if test="cjdw != null and cjdw != ''">
+                cjdw = #{cjdw},
+            </if>
+            <if test="cjdwJbr != null and cjdwJbr != ''">
+                cjdw_jbr = #{cjdwJbr},
+            </if>
+            <if test="whdw != null and whdw != ''">
+                whdw = #{whdw},
+            </if>
+            <if test="whdwJbr != null and whdwJbr != ''">
+                whdw_jbr = #{whdwJbr},
+            </if>
+        </trim>
+        WHERE
+            id = #{id};
+    </update>
+
+    <!--  根据id删除RTU型号  -->
+    <delete id="deleteRtuTypeById" parameterType="string">
+        DELETE FROM rtu_type WHERE id IN (${idStr});
+    </delete>
+</mapper>
